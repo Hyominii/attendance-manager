@@ -9,7 +9,7 @@ python 3.12.9 버전에서 진행했습니다.
 -[x] D5 - 리팩토링이 끝난 코드에, 코드 커버리지가 100% 되어야 한다
 
 # Code Coverage
-![img.png](img.png)
+![img.png](img_1.png)
 
 # 적용 디자인 패턴
 1. Factory method pattern => grade.py, algorithm.py
