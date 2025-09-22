@@ -32,3 +32,14 @@ def test_attendance_manager_file_not_found(capsys):
 
     assert "파일을 찾을 수 없습니다." in captured.out
 
+def test_attendance_manager_run(mocker: MockerFixture):
+    process_input_file_spy = mocker.spy(AttendanceManager, '_process_input_file')
+    cal_bonus_score_spy = mocker.spy(AttendanceManager, '_cal_bonus_score')
+    rate_grade_spy = mocker.spy(AttendanceManager, '_rate_grade')
+    manager = AttendanceManager()
+
+    manager.run()
+
+    process_input_file_spy.assert_called_with(manager, INPUT_FILE)
+    cal_bonus_score_spy.assert_called_once()
+    rate_grade_spy.assert_called_once()

@@ -1,9 +1,8 @@
-from constant import INPUT_FILE, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, \
-    BONUS_SCORE, BONUS_SCORE_THRESHOLD
+from constant import INPUT_FILE, BONUS_SCORE, BONUS_SCORE_THRESHOLD
 from file_handler import FileHandler
 from grade import GradeFactory, NormalGrade
 from player import Player
-from algorithm import TrainingDayAlgorithm, WeekdayAlgorithm, WeekendAlgorithm
+from algorithm import AlgorithmFactory
 
 
 class AttendanceManager:
@@ -35,16 +34,10 @@ class AttendanceManager:
 
         self._cal_player_score(day_of_the_week, player_index)
 
-    # strategy pattern
-    def _cal_player_score(self, day_of_the_week, player_index):
+    def _cal_player_score(self, day_of_the_week: str, player_index: int):
         player = self._players_info[player_index]
 
-        if day_of_the_week in (MONDAY, TUESDAY, THURSDAY, FRIDAY):
-            WeekdayAlgorithm.cal_score(player)
-        elif day_of_the_week in (SATURDAY, SUNDAY):
-            WeekendAlgorithm.cal_score(player)
-        elif day_of_the_week == WEDNESDAY:
-            TrainingDayAlgorithm.cal_score(player)
+        AlgorithmFactory.generate_algorithm(day_of_the_week, player)
 
     def _process_input_file(self, target_file: str):
         file_handler = FileHandler(target_file)
