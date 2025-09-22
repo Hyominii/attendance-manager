@@ -15,3 +15,7 @@ python 3.12.9 버전에서 진행했습니다.
 1. Factory method pattern => grade.py, algorithm.py
 
 2. Strategy pattern => algorithm.py
+
+
+# How to test?
+각 미션 디렉토리(mission1, mission2)에 들어가서 pytest 수행

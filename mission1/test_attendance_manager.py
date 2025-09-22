@@ -1,7 +1,7 @@
 import pytest
 import pytest_mock
 from attendance import main
-from mission1.constant import INPUT_FILE
+from constant import INPUT_FILE
 
 
 def test_result(capsys):
