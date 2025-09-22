@@ -64,6 +64,7 @@ def main():
         print_attendance_score(players_info)
         print_removed_player(players_info)
 
+
 def process_input_file(team_roster: dict, players_info: list):
     with open(INPUT_FILE, encoding='utf-8') as f:
         for _ in range(MAX_INPUT_FILE_LEN):
