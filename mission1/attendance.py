@@ -1,74 +1,70 @@
 from constant import Score, INPUT_FILE, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, \
-    MAX_INPUT_FILE_LEN, BONUS_SCORE, Grade
+    MAX_INPUT_FILE_LEN, BONUS_SCORE, Grade, BASE_SCORE, NAME, WEEKEND_ATTENDANCE, POINT, TRAINING_ATTENDANCE, GRADE, \
+    BASE_ATTENDANCE, GOLD_THRESHOLD, SILVER_THRESHOLD
 
-team_roster = {}
 id_cnt = 0
 
-# dat[사용자ID][요일]
-dat = [[0] * 100 for _ in range(100)]
-points = [0] * 100
-grade = [0] * 100
-names = [''] * 100
-training_attendance = [0] * 100
-weekend_attendance = [0] * 100
 
-
-def process_attendance(name, day_of_the_week):
+def process_attendance(team_roster: dict, players_info: list, name: str, day_of_the_week: str):
     global id_cnt
 
     # team_roster: key -> name, value -> uniform number(id)
     if name not in team_roster:
         id_cnt += 1
+        players_info.append({
+            "name": name,
+            "id": id_cnt,
+            "point": BASE_SCORE,
+            "grade": Grade.normal,
+            "training_attendance": BASE_ATTENDANCE,
+            "weekend_attendance": BASE_ATTENDANCE
+        })
         team_roster[name] = id_cnt
-        names[id_cnt] = name
 
     uniform_number = team_roster[name]
+    player_index = uniform_number - 1
 
+    cal_player_score(day_of_the_week, player_index, players_info)
+
+
+def cal_player_score(day_of_the_week, player_index, players_info):
     add_point = 0
-    index = 0
 
-    if day_of_the_week == "monday":
-        index = 0
+    if day_of_the_week == MONDAY:
         add_point += Score.normal
-    elif day_of_the_week == "tuesday":
-        index = 1
+    elif day_of_the_week == TUESDAY:
         add_point += Score.normal
-    elif day_of_the_week == "wednesday":
-        index = 2
+    elif day_of_the_week == WEDNESDAY:
         add_point += Score.training
-        training_attendance[uniform_number] += Score.normal
-    elif day_of_the_week == "thursday":
-        index = 3
+        players_info[player_index][TRAINING_ATTENDANCE] += 1
+    elif day_of_the_week == THURSDAY:
         add_point += Score.normal
-    elif day_of_the_week == "friday":
-        index = 4
+    elif day_of_the_week == FRIDAY:
         add_point += Score.normal
-    elif day_of_the_week == "saturday":
-        index = 5
-        add_point += 2
-        weekend_attendance[uniform_number] += Score.weekend
-    elif day_of_the_week == "sunday":
-        index = 6
-        add_point += 2
-        weekend_attendance[uniform_number] += Score.weekend
+    elif day_of_the_week == SATURDAY:
+        add_point += Score.weekend
+        players_info[player_index][WEEKEND_ATTENDANCE] += 1
+    elif day_of_the_week == SUNDAY:
+        add_point += Score.weekend
+        players_info[player_index][WEEKEND_ATTENDANCE] += 1
 
-    dat[uniform_number][index] += 1
-    points[uniform_number] += add_point
+    players_info[player_index][POINT] += add_point
 
 
 def main():
+    team_roster = {}
+    players_info = list()
     try:
-        process_input_file()
+        process_input_file(team_roster, players_info)
     except FileNotFoundError:
         print("파일을 찾을 수 없습니다.")
     else:
-        cal_bonus_score()
-        rate_grade()
-        print_attendance_score()
-        print_removed_player()
+        cal_bonus_score(players_info)
+        rate_grade(players_info)
+        print_attendance_score(players_info)
+        print_removed_player(players_info)
 
-
-def process_input_file():
+def process_input_file(team_roster: dict, players_info: list):
     with open(INPUT_FILE, encoding='utf-8') as f:
         for _ in range(MAX_INPUT_FILE_LEN):
             line = f.readline()
@@ -76,44 +72,47 @@ def process_input_file():
                 break
             parts = line.strip().split()
             if len(parts) == 2:
-                process_attendance(parts[0], parts[1])
+                process_attendance(team_roster, players_info, parts[0], parts[1])
 
 
-def print_removed_player():
+def print_removed_player(players_info: list):
     print("\nRemoved player")
     print("==============")
-    for i in range(1, id_cnt + 1):
-        if grade[i] not in (1, 2) and training_attendance[i] == 0 and weekend_attendance[i] == 0:
-            print(names[i])
+
+    for i in range(len(players_info)):
+        if (players_info[i][GRADE] not in (Grade.gold, Grade.silver)
+                and players_info[i][TRAINING_ATTENDANCE] == 0
+                and players_info[i][WEEKEND_ATTENDANCE] == 0):
+            print(players_info[i][NAME])
 
 
-def print_attendance_score():
-    for i in range(1, id_cnt + 1):
-        print(f"NAME : {names[i]}, POINT : {points[i]}, GRADE : ", end="")
-        if grade[i] == Grade.gold:
+def print_attendance_score(players_info: list):
+    for i in range(len(players_info)):
+        print(f"NAME : {players_info[i][NAME]}, POINT : {players_info[i][POINT]}, GRADE : ", end="")
+        if players_info[i][GRADE] == Grade.gold:
             print("GOLD")
-        elif grade[i] == Grade.silver:
+        elif players_info[i][GRADE] == Grade.silver:
             print("SILVER")
         else:
             print("NORMAL")
 
 
-def rate_grade():
-    for i in range(1, id_cnt + 1):
-        if points[i] >= 50:
-            grade[i] = Grade.gold
-        elif points[i] >= 30:
-            grade[i] = Grade.silver
+def rate_grade(players_info: list):
+    for i in range(len(players_info)):
+        if players_info[i][POINT] >= GOLD_THRESHOLD:
+            players_info[i][GRADE] = Grade.gold
+        elif players_info[i][POINT] >= SILVER_THRESHOLD:
+            players_info[i][GRADE] = Grade.silver
         else:
-            grade[i] = Grade.normal
+            players_info[i][GRADE] = Grade.normal
 
 
-def cal_bonus_score():
-    for i in range(1, id_cnt + 1):
-        if dat[i][2] >= 10:  # 트레이닝 데이 출석이 10회 이상일 경우 추가 점수
-            points[i] += BONUS_SCORE
-        if dat[i][5] + dat[i][6] >= 10:  # 주말 출석이 10회 이상일 경우 추가 점수
-            points[i] += BONUS_SCORE
+def cal_bonus_score(players_info: list):
+    for i in range(len(players_info)):
+        if players_info[i][TRAINING_ATTENDANCE] >= 10:  # 트레이닝 데이 출석이 10회 이상일 경우 추가 점수
+            players_info[i][POINT] += BONUS_SCORE
+        if players_info[i][WEEKEND_ATTENDANCE] >= 10:  # 주말 출석이 10회 이상일 경우 추가 점수
+            players_info[i][POINT] += BONUS_SCORE
 
 
 if __name__ == "__main__":
