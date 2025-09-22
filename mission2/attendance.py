@@ -12,9 +12,9 @@ class AttendanceManager:
         self._team_roster = dict()
         self._players_info = list()
 
-    def run(self):
+    def run(self, target_file: str = INPUT_FILE):
         try:
-            self._process_input_file()
+            self._process_input_file(target_file)
         except FileNotFoundError:
             print("파일을 찾을 수 없습니다.")
         else:
@@ -46,8 +46,8 @@ class AttendanceManager:
         elif day_of_the_week == WEDNESDAY:
             TrainingDayAlgorithm.cal_score(player)
 
-    def _process_input_file(self):
-        file_handler = FileHandler(INPUT_FILE)
+    def _process_input_file(self, target_file: str):
+        file_handler = FileHandler(target_file)
         file_content = file_handler.read_all_lines()
         for line in file_content:
             parts = line.strip().split()
@@ -82,8 +82,3 @@ class AttendanceManager:
                 self._players_info[i].point += BONUS_SCORE
             if self._players_info[i].weekend_attendance >= BONUS_SCORE_THRESHOLD:  # 주말 출석이 10회 이상일 경우 추가 점수
                 self._players_info[i].point += BONUS_SCORE
-
-
-if __name__ == "__main__":
-    manager = AttendanceManager()
-    manager.run()

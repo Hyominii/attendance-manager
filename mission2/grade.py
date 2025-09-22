@@ -15,8 +15,6 @@ class GradeFactory:
 
 
 class Grade(ABC):
-    def __init__(self):
-        self._repr_str = "NORMAL"
 
     def __repr__(self):
         return self._repr_str
