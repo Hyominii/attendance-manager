@@ -11,4 +11,3 @@ def test_result(capsys):
 
     with open("result.txt", encoding='utf-8') as f:
         assert captured.out == f.read()
-

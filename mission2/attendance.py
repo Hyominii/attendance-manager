@@ -1,5 +1,5 @@
-from constant import Score, INPUT_FILE, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, \
-    BONUS_SCORE
+from constant import INPUT_FILE, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, \
+    BONUS_SCORE, BONUS_SCORE_THRESHOLD
 from file_handler import FileHandler
 from grade import GradeFactory, NormalGrade
 from player import Player
@@ -63,7 +63,8 @@ class AttendanceManager:
             if self._should_be_removed(player):
                 print(self._players_info[i].name)
 
-    def _should_be_removed(self, player: Player) -> bool:
+    @staticmethod
+    def _should_be_removed(player: Player) -> bool:
         return isinstance(player.grade,
                           NormalGrade) and player.training_attendance == 0 and player.weekend_attendance == 0
 
@@ -77,9 +78,9 @@ class AttendanceManager:
 
     def _cal_bonus_score(self):
         for i in range(len(self._players_info)):
-            if self._players_info[i].training_attendance >= 10:  # 트레이닝 데이 출석이 10회 이상일 경우 추가 점수
+            if self._players_info[i].training_attendance >= BONUS_SCORE_THRESHOLD:  # 트레이닝 데이 출석이 10회 이상일 경우 추가 점수
                 self._players_info[i].point += BONUS_SCORE
-            if self._players_info[i].weekend_attendance >= 10:  # 주말 출석이 10회 이상일 경우 추가 점수
+            if self._players_info[i].weekend_attendance >= BONUS_SCORE_THRESHOLD:  # 주말 출석이 10회 이상일 경우 추가 점수
                 self._players_info[i].point += BONUS_SCORE
 
 
