@@ -19,6 +19,7 @@ class Grade(ABC):
     def __repr__(self):
         return self._repr_str
 
+
 class GoldGrade(Grade):
     def __init__(self):
         self._repr_str = "GOLD"

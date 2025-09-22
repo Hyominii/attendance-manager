@@ -13,6 +13,7 @@ class AlgorithmFactory:
         elif day_of_the_week == WEDNESDAY:
             TrainingDayAlgorithm.cal_score(player)
 
+
 class Algorithm(ABC):
     @staticmethod
     @abstractmethod
