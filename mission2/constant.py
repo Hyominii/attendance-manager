@@ -15,12 +15,6 @@ GOLD_THRESHOLD = 50
 SILVER_THRESHOLD = 30
 
 
-class Grade:
-    normal = 0
-    gold = 1
-    silver = 2
-
-
 class Score:
     normal = 1
     weekend = 2
