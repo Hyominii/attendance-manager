@@ -1,3 +1,4 @@
+import os
 import pytest
 from pytest_mock import MockerFixture
 from attendance import AttendanceManager
@@ -15,11 +16,14 @@ def test_result(capsys):
 
 
 def test_file_handler_write_and_read():
+    file_path = "test.txt"
     file_handler = FileHandler("test.txt")
     target_line = "hi, good"
 
     file_handler.write(target_line)
     line = file_handler.read()
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
     assert line == target_line
 

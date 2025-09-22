@@ -1,3 +1,6 @@
+# Overview
+python 3.12.9 버전에서 진행했습니다.
+
 # Checkpoint 
 -[x] D1 - 가독성 있는 코드로 메서드 추상화, 가독성 좋은 네이밍 사용
 -[x] D2 - Regression Test를 위한 Unit Test 개발
